@@ -2,6 +2,8 @@ package com.jonasesteves.comments.moderation.api.controller;
 
 import com.jonasesteves.comments.moderation.api.model.ModerationInput;
 import com.jonasesteves.comments.moderation.api.model.ModerationOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,7 @@ import java.time.Duration;
 @RequestMapping("api/moderate")
 public class ModerationController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ModerationController.class);
     private static final String[] FORBIDDEN_WORDS = {"ódio", "xingamento"};
     private static final String ALLOWED_REASON = "The comment has been approved.";
     private static final String REJECTED_REASON = "The comment has been rejected because it contains prohibited words.";
@@ -20,11 +23,12 @@ public class ModerationController {
     @PostMapping
     public ModerationOutput moderate(@RequestBody ModerationInput input) {
 
-//        try {
-//            Thread.sleep(Duration.ofSeconds(5));
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            Thread.sleep(Duration.ofSeconds(5));
+        } catch (InterruptedException e) {
+            logger.warn("Thread sleep was interrupted: ", e);
+            Thread.currentThread().interrupt();
+        }
 
         if (isAllowed(input.getText())) {
             return new ModerationOutput(true, ALLOWED_REASON);
